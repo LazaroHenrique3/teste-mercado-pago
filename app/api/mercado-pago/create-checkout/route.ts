@@ -4,6 +4,7 @@ import mpClient from "@/app/lib/mercado-pago";
 
 export async function POST(req: NextRequest) {
   const { testeId, userEmail } = await req.json();
+  const origin = req.headers.get("origin") || req.headers.get("referer") || "origin desconhecida";
 
   try {
     const preference = new Preference(mpClient);
@@ -29,7 +30,7 @@ export async function POST(req: NextRequest) {
             description: "Descrição do produto",
             title: "Nome do produto",
             quantity: 1,
-            unit_price: 9.99,
+            unit_price: 1.99,
             currency_id: "BRL",
             category_id: "category", // Recomendado inserir, mesmo que não tenha categoria - Aumenta a pontuação da sua integração com o Mercado Pago
           },
@@ -56,9 +57,9 @@ export async function POST(req: NextRequest) {
         },
         auto_return: "approved",
         back_urls: {
-          success: `${req.headers.get("origin")}/?status=sucesso`,
-          failure: `${req.headers.get("origin")}/?status=falha`,
-          pending: `${req.headers.get("origin")}/api/mercado-pago/pending`, // Criamos uma rota para lidar com pagamentos pendentes
+          success: `${origin}/?status=sucesso`,
+          failure: `${origin}/?status=falha`,
+          pending: `${origin}/api/mercado-pago/pending`, // Criamos uma rota para lidar com pagamentos pendentes
         },
       },
     });
